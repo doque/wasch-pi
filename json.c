@@ -1,31 +1,36 @@
 #include <json/json.h>
 #include <stdio.h>
+#include <fcntl.h>
+#include <curl/curl.h>
 
 int main() {
-  /*Creating a json object*/
-  json_object * jobj = json_object_new_object();
 
-  /*Creating a json string*/
-  json_object *jstring = json_object_new_string("Joys of Programming");
+  CURL *curl;
+  CURLcode res;
 
+  curl_global_init(CURL_GLOBAL_ALL);
+  struct curl_slist *headers = NULL;
+  curl_slist_append(headers, "Content-Type: applicatioon/json");
 
+  json_object *data = json_object_new_object();
+  json_object_object_add(data, "Hello", json_object_new_string("testing"));
 
-  /*Creating a json array*/
-  json_object *jarray = json_object_new_array();
+  curl = curl_easy_init();
 
-  /*Creating json strings*/
-  json_object *jstring1 = json_object_new_string("c");
+  if (curl) {
 
+    curl_easy_setopt(curl, CURLOPT_URL, "http://wasch.herokuapp.com");
+    curl_easy_setopt(curl, CURLOPT_POST, 1L);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, 1L);
 
-  /*Adding the above created json strings to the array*/
-  json_object_array_add(jarray,jstring1);
+    printf(json_object_to_json_string(data));
 
-  /*Form the json object*/
-  /*Each of these is like a key value pair*/
-  json_object_object_add(jobj,"Site Name", jstring);
-  json_object_object_add(jobj,"Categories", jarray);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_object_to_json_string(data));
+    res = curl_easy_perform(curl);
+    printf(curl_easy_strerror(res));
 
-  /*Now printing the json object*/
-  printf ("The json object created: %sn",json_object_to_json_string(jobj));
+    curl_global_cleanup();
+  }
 
+  return 0;
 }
