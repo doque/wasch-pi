@@ -10,7 +10,7 @@ int main() {
 
   curl_global_init(CURL_GLOBAL_ALL);
   struct curl_slist *headers = NULL;
-  curl_slist_append(headers, "Content-Type: applicatioon/json");
+  curl_slist_append(headers, "Content-Type: application/json");
 
   json_object *data = json_object_new_object();
   json_object_object_add(data, "Hello", json_object_new_string("testing"));
